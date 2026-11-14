@@ -1,0 +1,11 @@
+.godot/
+.import/
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+build/
+dist/

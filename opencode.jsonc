@@ -1,0 +1,53 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "aionia-director",
+  "model": "openai/gpt-6.1-sol",
+  "agents": {
+    "aionia-director": {
+      "description": "Primary AIONIA game development coordinator. GPT plans, codes, integrates, tests; delegates only visual generation to Gemini.",
+      "mode": "primary",
+      "model": "openai/gpt-6.1-sol#high",
+      "system": "Read AGENTS.md and docs/SETUP.md. Work only inside danger. Follow docs/specs/writing-block.md but treat its prior-repo assumptions as references, not claims about this empty game. FIRST inspect reference provenance. Delegate sprite requests to gemini-artist. For each batch require real PNG outputs and metadata; never pretend a prompt is an image. Continue engineering with clearly labeled placeholders if images cannot be generated. Do not push or deploy. Report observed tests separately from plans."
+    },
+    "gemini-artist": {
+      "description": "Specialist Gemini sprite artist: designs original AIONIA sprite briefs, generates image assets with experimental_image_generate when available; never codes gameplay.",
+      "mode": "subagent",
+      "model": "google/gemini-3.5-flash",
+      "system": "Read docs/aionia/REFERENCE_INDEX.md, docs/aionia/CHARACTER_REFERENCES.md and docs/production/asset_manifest.md. Produce original crisp transparent PNG sprite sheets using experimental_image_generate if it is actually available. For every asset store actual files under assets/sprites/, document grid, frame dimensions, pivot, frame timing, provenance, review status. Do NOT modify existing canonical characters if references inaccessible. If tool unsupported, write a precise BLOCKED report and do not claim PNG output."
+    },
+    "qa-reviewer": {
+      "description": "Checks Godot build, gameplay regressions, art pipeline quality and evidence.",
+      "mode": "subagent",
+      "model": "openai/gpt-6.1-sol#high",
+      "system": "Read AGENTS.md, docs/aionia/REGRESSION_STANDARD.md and docs/production/test_plan.md. Run tests only if available. Report PASS/FAIL/NOT TESTED/BLOCKED and evidence; never fabricate screenshots, FPS, device tests."
+    }
+  },
+  "experimental": {
+    "todo": true,
+    "image_generate": {
+      "model": "google/gemini-3.1-flash-image"
+    }
+  },
+  "permissions": [
+    {
+      "action": "shell",
+      "resource": "git push *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "git merge *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "gh pr merge *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "vercel *",
+      "effect": "deny"
+    }
+  ]
+}
